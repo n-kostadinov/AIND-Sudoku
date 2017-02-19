@@ -3,11 +3,16 @@
 
 # Question 1 (Naked Twins)
 Q: How do we use constraint propagation to solve the naked twins problem?  
-A: *Student should provide answer here*
+A: To solve the naked twins problem a new constraint is implemented - if a unit contains two boxes with identical two character values, all other boxes in that unit are not allowed to contain either of the characters. This constraint is propagated at every puzzle reduction step to all units - that are all rows, columns, 3x3 squares, and in a diagonal sudoku the two diagonals.
+
 
 # Question 2 (Diagonal Sudoku)
 Q: How do we use constraint propagation to solve the diagonal sudoku problem?  
-A: *Student should provide answer here*
+A: We add a new type of unit, that is the diagonal. In the process of solving the constraints (i.e. elimination, only choice, naked twins, hidden twins) are propagated to all units. By propagating the constraints to the diagonal, the sudoku gets solved as a diagonal sudoku.
+
+# A NOTE to the Reviewer
+The sudoku_env.py modul has beed included to enable turning on and off the diagonal sudoku mode. The diagonal sudoku mode is turned on by default. It is intentionally switched off in the solution_unit_test.py as it was easier to test and debug an ordinary sudoku. Hopefully, the additional test modules that have been used do not present any difficulties.
+An additional strategy has been implemented and tested - the hidden twins strategy.
 
 ### Install
 
