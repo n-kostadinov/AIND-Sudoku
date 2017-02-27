@@ -175,31 +175,6 @@ class TestSolution(unittest.TestCase):
 
         self.assertEqual('9', result['D1'])
 
-    def test_hidden_twins(self):
-
-        # given
-        """
-        267    18  12678 |  5     48    3   | 678    9   24678
-        239    89   238  |  48    6     7   |  1     5    248
-        67    5     4   |  9     2     1   | 678    3    678
-        ------------------+------------------+------------------
-        8     4     9   |  3     7     56  |  2     16   156
-        1     3     26  | 248    48    56  | 568    7     9
-        26    7     5   |  28    1     9   |  4     68    3
-        ------------------+------------------+------------------
-        79   189   178  |  6     5     4   |  3     2    178
-        45    6     18  |  7     3     2   |  9    148   1458
-        3457   2     37  |  1     9     8   | 567    46   4567 """
-        t_values = solution.eliminate(solution.grid_values('...5.3.9.....6715..54921.3.84937.2..13.....79.75.194.3...65432..6.7329...2.198...'))
-
-        # when
-        result = solution.hidden_twins(t_values)
-
-        # then
-        self.assertEquals('3', result['B1']) # B1 is updated from 239 to 3
-        print()
-        solution.display(t_values)
-
     def test_world_hardest_sudoku(self):
 
         # given See http://www.telegraph.co.uk/news/science/science-news/9359579/Worlds-hardest-sudoku-can-you-crack-it.html
@@ -230,4 +205,3 @@ class TestSolution(unittest.TestCase):
 
 if __name__ == '__main__':
     unittest.main()
-

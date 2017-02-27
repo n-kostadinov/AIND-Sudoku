@@ -41,43 +41,6 @@ def naked_twins(values):
 
     return values
 
-def hidden_twins(values):
-    """Eliminate values using the hidden twins strategy.
-    Args:
-        values(dict): a dictionary of the form {'box_name': '123456789', ...}
-
-    Returns:
-        the values dictionary with the naked hidden eliminated from peers.
-    """
-    # some help functions
-    box_intersection = lambda small_box, big_box, vals: set(vals[small_box]).intersection(set(vals[big_box]))
-    box_difference = lambda small_box, big_box, vals: set(vals[big_box]).difference(set(vals[small_box]))
-
-    for unit in UNITLIST:
-        unsolved = [box for box in unit if len(values[box]) > 1]
-
-        for small_box in unsolved:
-            if len(values[small_box]) == 2: # box containing exactly two vlaues
-                for big_box in unsolved:
-                    if len(values[big_box]) > 2: # box containing more than two vlaues
-                        if box_intersection(small_box, big_box, values) == set(values[small_box]): # those are potential hidden twins
-                            other_boxes = [box for box in unsolved if box != small_box and box != big_box] # all unsolved boxes that are not the small and big box
-                            # no intersection between the small box and the other boxes -> big and small boxes are indeed hidden twins BINGO!
-                            if len(other_boxes) > 0 and sum([len(box_intersection(small_box, box, values)) for box in other_boxes]) == 0:
-                                # update all units where big box is in
-                                for unit in UNITS[big_box]:
-                                    # all boxes that are unsolved and may be updated
-                                    all_unsolved_boxes = [box for box in unit if len(values[box]) > 1 and box != big_box]
-                                    # get a string that is all digits if all unsolved boxes
-                                    all_unsolved_digits = ''.join([values[box] for box in all_unsolved_boxes])
-                                    for digit in box_difference(small_box, big_box, values):
-                                        if all_unsolved_digits.count(digit) == 1: # there is a "lonely" digit that is found only in the big box and one other box
-                                            for box in all_unsolved_boxes: # update the value of that box to be the digit
-                                                if digit in values[box]:
-                                                    values = assign_value(values, box, digit)
-
-    return values
-
 def grid_values(grid):
 
     """
@@ -177,8 +140,6 @@ def reduce_puzzle(values):
         values = eliminate(values)
         # Use the Only Choice Strategy
         values = only_choice(values)
-        # Use the Hidden Twins Strategy
-        values = hidden_twins(values)
         # Use the Naked Twins Strategy
         values = naked_twins(values)
         # Check how many boxes have a determined value, to compare
@@ -190,13 +151,14 @@ def reduce_puzzle(values):
             return False
     return values
 
-def search(values):
+def search(values, attempts=[0]):
     "Using depth-first search and propagation, try all possible values."
     # First, reduce the puzzle using the previous function
     values = reduce_puzzle(values)
     if values is False:
         return False ## Failed earlier
     if all(len(values[s]) == 1 for s in BOXES):
+        print('Solved after', attempts[0], 'attempts.')
         return values ## Solved!
     # Choose one of the unfilled squares with the fewest possibilities
     n,s = min((len(values[s]), s) for s in BOXES if len(values[s]) > 1)
@@ -204,7 +166,8 @@ def search(values):
     for value in values[s]:
         new_sudoku = values.copy()
         new_sudoku[s] = value
-        attempt = search(new_sudoku)
+        attempts[0] = attempts[0] + 1
+        attempt = search(new_sudoku, attempts)
         if attempt:
             return attempt
 
